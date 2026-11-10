@@ -17,8 +17,28 @@ namespace Diamond_Fighters_Quiz_Battle
             try
             {
                 string jsonQuestionsString = File.ReadAllText(filePath);
-                var questions = JsonSerializer.Deserialize<List<Question>>(jsonQuestionsString);
-                return questions ?? new List<Question>(); //Om det blir fel i listan gör ?? att en tom lista returneras.
+
+                var questionJsonFileDto = JsonSerializer.Deserialize<QuestionJsonFileDto>(jsonQuestionsString);
+                var questions = new List<Question>();
+
+                foreach (var jsonCategoryDto in questionJsonFileDto.Categories)
+                {
+                    foreach (var i in jsonCategoryDto.Questions)
+                    {
+                        var question = new Question
+                        {
+                            QuestionText = i.QuestionText,
+                            Category = jsonCategoryDto.Category, // Hämtas från kategorins "name" i JSON
+                            DifficultyLevel = i.DifficultyLevel,
+                            CorrectAnswer = i.CorrectAnswer,
+                            AnswerOptions = i.AnswerOptions //fel måste fixa så att den sorterar olika sorters frågor på typ
+                        };
+
+                        questions.Add(question);
+                    }
+
+                    return questions ?? new List<Question>(); //Om det blir fel i listan gör ?? att en tom lista returneras.
+                }
             }
             catch (JsonException ex)
             {
@@ -52,7 +72,7 @@ namespace Diamond_Fighters_Quiz_Battle
         public string QuestionText { get; set; }
 
         [JsonPropertyName("correctIndex")]
-        public string CorrectIndex { get; set; }
+        public string CorrectAnswer { get; set; }
 
         [JsonPropertyName("options")]
         public List<string> AnswerOptions { get; set; }

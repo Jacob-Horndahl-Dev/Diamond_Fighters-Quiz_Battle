@@ -27,13 +27,23 @@ namespace Diamond_Fighters_Quiz_Battle
             }
         }
     }
-    internal class QuestionJsonDto //dto betyder data transfer object
+    internal class QuestionJsonFileDto //dto betyder data transfer object
+    {
+        [JsonPropertyName("categories")]        //På grund av att json filen var uppbyggd med kategorier måste vi avkoda dem först.
+        public List<JsonCategoryDto> Categories { get; set; }
+    }
+    internal class JsonCategoryDto //Hämtar namnet på frågorna och kategorin
+    {
+        [JsonPropertyName("name")]
+        public string Category { get; set; }
+
+        [JsonPropertyName("questions")]
+        public List<QuestionJsonDto> Questions { get; set; }
+    }
+    internal class QuestionJsonDto //Hämtar datafälten i frågorna
     {
         [JsonPropertyName("type")]
         public string Type { get; set; }
-
-        [JsonPropertyName("category")]
-        public string Category { get; set; }
 
         [JsonPropertyName("difficulty")]
         public string DifficultyLevel { get; set; }
@@ -42,7 +52,7 @@ namespace Diamond_Fighters_Quiz_Battle
         public string QuestionText { get; set; }
 
         [JsonPropertyName("correctIndex")]
-        public string CorrectAnswer { get; set; }
+        public string CorrectIndex { get; set; }
 
         [JsonPropertyName("options")]
         public List<string> AnswerOptions { get; set; }

@@ -1,7 +1,7 @@
 ﻿
 namespace Diamond_Fighters_Quiz_Battle
 {
-    internal interface IQuestionReposotory
+    internal interface IQuestionRepository
     {
         List<Question> LoadQuestions();
     }

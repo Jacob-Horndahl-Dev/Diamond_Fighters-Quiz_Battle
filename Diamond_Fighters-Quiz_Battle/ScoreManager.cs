@@ -26,18 +26,27 @@ namespace Diamond_Fighters_Quiz_Battle
             return basePoints + bonus;
         }
 
-        public List<Player> DetermineWinner(List<Player> players)
-        {
-            if (players.Count == 0)
-            {
-                return new List<Player>();
-            }
+        
+public List<Player> DetermineWinner(List<Player> players)
+{
+    if (players.Count == 0)
+    {
+        return new List<Player>();
+    }
 
-            int highestScore = players.Max(p => p.Score);
+    int highestScore = players.Max(p => p.Score);
 
-            return players
-                .Where(p => p.Score == highestScore)
-                .ToList();
-        }
+    List<Player> topPlayers = players
+        .Where(p => p.Score == highestScore)
+        .ToList();
+
+    int mostCorrectAnswers = topPlayers
+        .Max(p => p.CorrectAnswers);
+
+    return topPlayers
+        .Where(p => p.CorrectAnswers == mostCorrectAnswers)
+        .ToList();
+}
+
     }
 }

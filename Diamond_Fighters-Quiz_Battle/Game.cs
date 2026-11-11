@@ -17,6 +17,16 @@ namespace Diamond_Fighters_Quiz_Battle
             if (players == null || players.Count < 2 || players.Count > 4)
                 throw new ArgumentException("The game requires 2-4 players.");
 
+            if (players.Any(p => p == null ||
+                                 string.IsNullOrWhiteSpace(p.Name)) ||
+                players.Select(p => p.Name.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .Count() != players.Count)
+            {
+                throw new ArgumentException(
+                    "Players must have unique, non-empty names.");
+            }
+
             if (questions == null)
                 throw new ArgumentNullException(nameof(questions));
 
@@ -37,6 +47,7 @@ namespace Diamond_Fighters_Quiz_Battle
             {
                 player.Score = 0;
                 player.ResetStreak();
+                player.CorrectAnswers = 0;
             }
 
             for (int round = 1; round <= totalRounds; round++)
@@ -47,7 +58,7 @@ namespace Diamond_Fighters_Quiz_Battle
                     break;
                 }
 
-                Console.WriteLine($"\nRound {round} of {totalRounds}");
+                Console.WriteLine($"\n=== Round {round} of {totalRounds} ===");
                 PlayRound();
             }
 
@@ -71,20 +82,32 @@ namespace Diamond_Fighters_Quiz_Battle
                 if (category == null)
                     return;
 
-                Question? question = questions
-                    .FirstOrDefault(q =>
-                        string.Equals(
-                            q.Category,
-                            category,
-                            StringComparison.OrdinalIgnoreCase));
+                List<Question> availableQuestions = questions
+                    .Where(q => string.Equals(
+                        q.Category,
+                        category,
+                        StringComparison.OrdinalIgnoreCase))
+                    .ToList();
 
-                if (question == null)
+                if (availableQuestions.Count == 0)
+                {
+                    Console.WriteLine("No questions available.");
                     return;
+                }
 
+                // Select a random unused question.
+                Question question = availableQuestions[
+                    Random.Shared.Next(availableQuestions.Count)];
+
+                // Remove it so it cannot appear again.
                 questions.Remove(question);
 
-                Console.WriteLine($"Category: {question.Category}");
-                Console.WriteLine($"Difficulty: {question.DifficultyLevel}");
+                int difficulty = GetDifficulty(question.DifficultyLevel);
+                int basePoints = question.GetScore();
+
+                Console.WriteLine(
+                    $"\nCategory: {question.Category} ({basePoints} points)");
+
                 Console.WriteLine(question.QuestionText);
 
                 if (question is MultipleChoiceQuestion multipleChoice)
@@ -97,51 +120,39 @@ namespace Diamond_Fighters_Quiz_Battle
                 }
                 else if (question is TrueFalseQuestion)
                 {
-                    Console.WriteLine("Answer true or false.");
+                    Console.WriteLine("True (t) or false (f)?");
                 }
 
-                Console.Write("Your answer: ");
-                string answer = Console.ReadLine() ?? "";
+                string answer = ReadAnswer(question);
 
                 if (question.CheckAnswer(answer))
                 {
-                    int difficulty = question.DifficultyLevel?
-                        .Trim()
-                        .ToLower() switch
-                    {
-                        "easy" => 1,
-                        "medium" => 2,
-                        "hard" => 3,
-                        _ => 1
-                    };
-
                     int points = scoreManager.CalculateScore(
                         difficulty,
                         player.Streak);
 
+                    int bonus = points - basePoints;
+
                     player.AddPoints(points);
                     player.Streak++;
+                    player.CorrectAnswers++;
 
-                    Console.WriteLine($"Correct! +{points} points.");
-                    Console.WriteLine($"Current streak: {player.Streak}");
+                    Console.WriteLine($"\nCorrect! +{points} points.");
+
+                    if (bonus > 0)
+                    {
+                        Console.WriteLine(
+                            $"Streak bonus: +{bonus} points " +
+                            $"({player.Streak} correct in a row).");
+                    }
                 }
                 else
                 {
                     player.ResetStreak();
 
-                    Console.WriteLine("Incorrect! 0 points.");
-
-                    string correctAnswer = question.CorrectAnswer;
-
-                    if (question is MultipleChoiceQuestion mc &&
-                        int.TryParse(question.CorrectAnswer, out int index) &&
-                        index >= 0 &&
-                        index < mc.AnswerOptions.Count)
-                    {
-                        correctAnswer = mc.AnswerOptions[index];
-                    }
-
-                    Console.WriteLine($"Correct answer: {correctAnswer}");
+                    Console.WriteLine("\nIncorrect! 0 points.");
+                    Console.WriteLine(
+                        $"Correct answer: {GetCorrectAnswer(question)}");
                 }
 
                 Console.WriteLine($"Total score: {player.Score}");
@@ -166,33 +177,140 @@ namespace Diamond_Fighters_Quiz_Battle
 
             for (int i = 0; i < categories.Count; i++)
             {
-                Console.WriteLine($"{i + 1}. {categories[i]}");
+                string category = categories[i];
+
+                int remaining = questions.Count(q =>
+                    string.Equals(
+                        q.Category,
+                        category,
+                        StringComparison.OrdinalIgnoreCase));
+
+                Console.WriteLine(
+                    $"{i + 1}. {category} ({remaining} questions left)");
             }
+
+            int randomOption = categories.Count + 1;
+
+            Console.WriteLine($"{randomOption}. Random category");
 
             while (true)
             {
                 Console.Write("Enter category number: ");
-                string input = Console.ReadLine() ?? "";
+                string? input = Console.ReadLine();
 
-                if (int.TryParse(input, out int choice) &&
-                    choice >= 1 &&
-                    choice <= categories.Count)
+                if (input == null)
+                    return null;
+
+                if (int.TryParse(input, out int choice))
                 {
-                    return categories[choice - 1];
+                    if (choice >= 1 && choice <= categories.Count)
+                        return categories[choice - 1];
+
+                    if (choice == randomOption)
+                    {
+                        string randomCategory = questions[
+                            Random.Shared.Next(questions.Count)].Category;
+
+                        Console.WriteLine(
+                            $"Random category: {randomCategory}");
+
+                        return randomCategory;
+                    }
                 }
 
                 Console.WriteLine("Invalid choice. Try again.");
             }
         }
 
+        private string ReadAnswer(Question question)
+        {
+            while (true)
+            {
+                Console.Write("Your answer: ");
+                string input = (Console.ReadLine() ?? "").Trim();
+
+                if (question is MultipleChoiceQuestion multipleChoice)
+                {
+                    if (int.TryParse(input, out int choice) &&
+                        choice >= 1 &&
+                        choice <= multipleChoice.AnswerOptions.Count)
+                    {
+                        return input;
+                    }
+
+                    Console.WriteLine(
+                        $"Enter a number between 1 and " +
+                        $"{multipleChoice.AnswerOptions.Count}.");
+                }
+                else if (question is TrueFalseQuestion)
+                {
+                    switch (input.ToLowerInvariant())
+                    {
+                        case "t":
+                        case "true":
+                        case "s":
+                        case "sant":
+                            return "true";
+
+                        case "f":
+                        case "false":
+                        case "falskt":
+                            return "false";
+                    }
+
+                    Console.WriteLine("Enter true (t) or false (f).");
+                }
+                else
+                {
+                    if (!string.IsNullOrWhiteSpace(input))
+                        return input;
+
+                    Console.WriteLine("Answer cannot be empty.");
+                }
+            }
+        }
+
+        private int GetDifficulty(string? difficulty)
+        {
+            return difficulty?.Trim().ToLowerInvariant() switch
+            {
+                "easy" => 1,
+                "medium" => 2,
+                "hard" => 3,
+                _ => 1
+            };
+        }
+
+        private string GetCorrectAnswer(Question question)
+        {
+            if (question is MultipleChoiceQuestion multipleChoice &&
+                int.TryParse(question.CorrectAnswer, out int index) &&
+                index >= 0 &&
+                index < multipleChoice.AnswerOptions.Count)
+            {
+                return multipleChoice.AnswerOptions[index];
+            }
+
+            return question.CorrectAnswer;
+        }
+
         public void EndGame()
         {
-            Console.WriteLine("\nGame over!");
+            Console.WriteLine("\n=== Game over! ===");
             Console.WriteLine("\nFinal scores:");
 
-            foreach (Player player in players.OrderByDescending(p => p.Score))
+            List<Player> rankedPlayers = players
+                .OrderByDescending(p => p.Score)
+                .ThenByDescending(p => p.CorrectAnswers)
+                .ToList();
+
+            for (int i = 0; i < rankedPlayers.Count; i++)
             {
-                Console.WriteLine($"{player.Name}: {player.Score} points");
+                Player player = rankedPlayers[i];
+
+                Console.WriteLine(
+                    $"{i + 1}. {player.Name}: {player.Score} points " +
+                    $"({player.CorrectAnswers} correct)");
             }
 
             List<Player> winners = scoreManager.DetermineWinner(players);

@@ -6,6 +6,7 @@ namespace Diamond_Fighters_Quiz_Battle
         public string Name { get; set; } = "";
         public int Score { get; set; }
         public int Streak { get; set; }
+        public int CorrectAnswers { get; set; }
 
         public void AddPoints(int points)
         {

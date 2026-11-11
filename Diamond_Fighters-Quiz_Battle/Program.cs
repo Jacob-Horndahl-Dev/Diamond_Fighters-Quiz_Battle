@@ -1,1 +1,1 @@
-﻿Console.WriteLine("Hello, World!");
+﻿using Diamond_Fighters_Quiz_Battle;

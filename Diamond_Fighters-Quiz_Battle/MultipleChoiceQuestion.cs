@@ -4,6 +4,17 @@ namespace Diamond_Fighters_Quiz_Battle
     internal class MultipleChoiceQuestion : Question
     {
         public List<string> AnswerOptions { get; init; } = []; //Lista med svarsalternativen 
+        public override void ShowQuestionAnswerOptions()
+        {
+            if (AnswerOptions != null)
+            {
+                for (int i = 0; i < AnswerOptions.Count; i++)
+                {
+                    // Skriver ut alternativen med 1-4 för spelaren
+                    Console.WriteLine($"{i + 1}. {AnswerOptions[i]}");
+                }
+            }
+        }
         public override bool CheckAnswer(string guessedAnswer) //Kontroll av svar när flera alternativ finns.
         {            
             if (int.TryParse(guessedAnswer, out int parsedGuess)) //Kontroll av svar via index (1-4)

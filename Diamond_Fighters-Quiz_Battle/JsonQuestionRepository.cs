@@ -21,6 +21,11 @@ namespace Diamond_Fighters_Quiz_Battle
                 var questionJsonFileDto = JsonSerializer.Deserialize<QuestionJsonFileDto>(jsonQuestionsString);
                 var questions = new List<Question>();
 
+                if (questionJsonFileDto?.Categories == null) // ? gör att den inte krachar om objektet inte finns/filen tom, annars kollar den om categories inte finns.
+                {
+                    return questions; // tom lista om kategorier saknas
+                }
+
                 foreach (var jsonCategoryDto in questionJsonFileDto.Categories)
                 {
                     foreach (var i in jsonCategoryDto.Questions)

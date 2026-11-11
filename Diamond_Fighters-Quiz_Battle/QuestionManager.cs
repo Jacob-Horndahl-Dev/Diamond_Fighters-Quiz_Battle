@@ -12,12 +12,13 @@ namespace Diamond_Fighters_Quiz_Battle
         public QuestionManager()
         {            
             _questionRepository = new JsonQuestionRepository(); //Här anges vilken källa till frågorna, kan byta ut Json till annan klass, tex något på webben eller annan filtyp.
-            categoriesList = questions.Select(q => q.Category).Distinct().ToList(); //Laddar en lista med alla kategorier som fanns med i början av spelet.
+            LoadQuestions();
         }
         public void LoadQuestions() //laddar frågorna från json-fil och lägger till i listan. //blandar också frågorna
         {
             questions = _questionRepository.LoadQuestions(); //Fyller den tomma listan med frågor från den valda källan.
             questions = questions.OrderBy(q => Guid.NewGuid()).ToList(); //Linq funktionen Guid.NewGuid() blandar listan, och vi slipper göra en loop för det!
+            categoriesList = questions.Select(q => q.Category).Distinct().ToList(); //Laddar en lista med alla kategorier som fanns med i början av spelet.
         }
         public List<string> GetCategories()
         {

@@ -39,7 +39,7 @@ namespace Diamond_Fighters_Quiz_Battle
                                 QuestionText = i.QuestionText,
                                 Category = jsonCategoryDto.Category, // Hämtas från kategorins "name" i JSON
                                 DifficultyLevel = i.DifficultyLevel,
-                                CorrectAnswer = i.CorrectAnswer
+                                CorrectAnswer = i.CorrectAnswer.ToString()
                             };
                             questions.Add(trueFalseQuestion);
                         }
@@ -51,7 +51,7 @@ namespace Diamond_Fighters_Quiz_Battle
                                 QuestionText = i.QuestionText,
                                 Category = jsonCategoryDto.Category, // Hämtas från kategorins "name" i JSON
                                 DifficultyLevel = i.DifficultyLevel,
-                                CorrectAnswer = i.CorrectAnswer,
+                                CorrectAnswer = i.CorrectAnswer.ToString(),
                                 AnswerOptions = i.AnswerOptions
                             };                            
                             questions.Add(multipleChoiceQuestion);
@@ -98,7 +98,7 @@ namespace Diamond_Fighters_Quiz_Battle
         public string QuestionText { get; set; }
 
         [JsonPropertyName("correctIndex")]
-        public string CorrectAnswer { get; set; }
+        public int CorrectAnswer { get; set; }
 
         [JsonPropertyName("options")]
         public List<string> AnswerOptions { get; set; }

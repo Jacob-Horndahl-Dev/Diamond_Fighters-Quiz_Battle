@@ -10,7 +10,7 @@ namespace Diamond_Fighters_Quiz_Battle
         {            
             if (!File.Exists(filePath))
             {
-                Console.WriteLine("FATAL ERROR: FILE NOT FOUND. QUESTION DATABASE COULD NOT BE IMPORTED...");
+                Console.WriteLine("KRITISKT FEL: FILEN KUNDE INTE HITTAS. FRÅGORNA KUNDE INTE IMPORTERAS...");
                 return new List<Question>();
             }
 
@@ -25,24 +25,45 @@ namespace Diamond_Fighters_Quiz_Battle
                 {
                     foreach (var i in jsonCategoryDto.Questions)
                     {
-                        var question = new Question
+                        //var question = new Question(); //kunde inte göras så här lätt pga av olika frågetyper.
+                                                
+                        if (i.Type == "trueFalse")  //Hittar alla trueFalsefrågor och importerar dem
                         {
-                            QuestionText = i.QuestionText,
-                            Category = jsonCategoryDto.Category, // Hämtas från kategorins "name" i JSON
-                            DifficultyLevel = i.DifficultyLevel,
-                            CorrectAnswer = i.CorrectAnswer,
-                            AnswerOptions = i.AnswerOptions //fel måste fixa så att den sorterar olika sorters frågor på typ
-                        };
+                            var trueFalseQuestion = new TrueFalseQuestion
+                            {
+                                QuestionText = i.QuestionText,
+                                Category = jsonCategoryDto.Category, // Hämtas från kategorins "name" i JSON
+                                DifficultyLevel = i.DifficultyLevel,
+                                CorrectAnswer = i.CorrectAnswer
+                            };
+                            questions.Add(trueFalseQuestion);
+                        }
 
-                        questions.Add(question);
-                    }
+                        else if (i.Type == "multipleChoice") //Hittar alla flervalsfrågor och importerar dem
+                        {
+                            var multipleChoiceQuestion = new MultipleChoiceQuestion
+                            {
+                                QuestionText = i.QuestionText,
+                                Category = jsonCategoryDto.Category, // Hämtas från kategorins "name" i JSON
+                                DifficultyLevel = i.DifficultyLevel,
+                                CorrectAnswer = i.CorrectAnswer,
+                                AnswerOptions = i.AnswerOptions
+                            };                            
+                            questions.Add(multipleChoiceQuestion);
+                        }
 
-                    return questions ?? new List<Question>(); //Om det blir fel i listan gör ?? att en tom lista returneras.
+                        else
+                        {
+                            continue; //om en fråga av okänd typ finns med hoppar programmet över frågan.
+                        }
+                    }                    
                 }
+                return questions ?? new List<Question>(); //Om det blir fel i listan gör ?? att en tom lista returneras.
             }
             catch (JsonException ex)
             {
-                Console.WriteLine($"FATAL ERROR: JSON-filen felaktig formaterad: {ex.Message}");
+                Console.WriteLine($"KRITISKT FEL: JSON-fil med frågor var felaktig formaterad: {ex.Message}");
+                Console.WriteLine("FRÅGORNA KUNDE INTE IMPORTERAS!");
                 return new List<Question>();
             }
         }

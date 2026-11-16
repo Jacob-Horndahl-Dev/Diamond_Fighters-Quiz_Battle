@@ -30,7 +30,7 @@
                 switch (choice)
                 {
                     case 1:
-                        StartGame();
+                        InitializeGame();
                         break;
                     case 2:
                         highScores.ShowHighScores();
@@ -76,7 +76,7 @@
         }
 
         // Läser antal spelare, namn och rundor. Spelet kopplas in när Game finns.
-        public void StartGame()
+        public void InitializeGame()
         {
             int playerCount = GetPlayerInput("Antal spelare (2-4): ", 2, 4);
             List<string> names = ReadPlayerNames(playerCount);

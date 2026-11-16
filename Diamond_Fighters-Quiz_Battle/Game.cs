@@ -16,7 +16,7 @@ namespace Diamond_Fighters_Quiz_Battle
         public Game(List<Player> players, List<Question> questions, int totalRounds, HighScoreManager highScores)
         {
             if (players == null || players.Count < 2 || players.Count > 4)
-                throw new ArgumentException("The game requires 2-4 players.");
+                throw new ArgumentException("Spelet kräver 2–4 spelare.");
 
             if (players.Any(p => p == null ||
                                  string.IsNullOrWhiteSpace(p.Name)) ||
@@ -25,14 +25,14 @@ namespace Diamond_Fighters_Quiz_Battle
                     .Count() != players.Count)
             {
                 throw new ArgumentException(
-                    "Players must have unique, non-empty names.");
+                    "Alla spelare måste ha olika namn och namnen får inte vara tomma.");
             }
 
             if (questions == null)
                 throw new ArgumentNullException(nameof(questions));
 
             if (totalRounds < 1 || totalRounds > 10)
-                throw new ArgumentException("Choose 1-10 rounds.");
+                throw new ArgumentException("Välj mellan 1 och 10 rundor.");
 
             this.players = players;
             this.questions = new List<Question>(questions);
@@ -43,7 +43,7 @@ namespace Diamond_Fighters_Quiz_Battle
 
         public void StartGame()
         {
-            Console.WriteLine("Welcome to Quiz Battle!");
+            Console.WriteLine("Välkommen till Quiz Battle!");
 
             foreach (Player player in players)
             {
@@ -56,11 +56,11 @@ namespace Diamond_Fighters_Quiz_Battle
             {
                 if (questions.Count == 0)
                 {
-                    Console.WriteLine("No more questions available.");
+                    Console.WriteLine("Det finns inga fler frågor.");
                     break;
                 }
 
-                Console.WriteLine($"\n=== Round {round} of {totalRounds} ===");
+                Console.WriteLine($"\n=== Runda {round} av {totalRounds} ===");
                 PlayRound();
             }
 
@@ -73,11 +73,11 @@ namespace Diamond_Fighters_Quiz_Battle
             {
                 if (questions.Count == 0)
                 {
-                    Console.WriteLine("No more questions available.");
+                    Console.WriteLine("Det finns inga fler frågor.");
                     return;
                 }
 
-                Console.WriteLine($"\n{player.Name}'s turn!");
+                Console.WriteLine($"\nNu är det {player.Name}:s tur!");
 
                 string? category = ChooseCategory();
 
@@ -93,30 +93,26 @@ namespace Diamond_Fighters_Quiz_Battle
 
                 if (availableQuestions.Count == 0)
                 {
-                    Console.WriteLine("No questions available.");
+                    Console.WriteLine("Det finns inga frågor tillgängliga.");
                     return;
                 }
 
-                // Select a random unused question.
+                // Välj en slumpmässig fråga som inte använts tidigare.
                 Question question = availableQuestions[
                     Random.Shared.Next(availableQuestions.Count)];
 
-                // Remove it so it cannot appear again.
+                // Ta bort frågan så att den inte kommer igen.
                 questions.Remove(question);
 
                 int difficulty = GetDifficulty(question.DifficultyLevel);
                 int basePoints = question.GetScore();
 
                 Console.WriteLine(
-                    $"\nCategory: {question.Category} ({basePoints} points)");
+                    $"\nKategori: {question.Category} ({basePoints} poäng)");
 
                 Console.WriteLine(question.QuestionText);
 
-  
-
-question.ShowQuestionAnswerOptions();
-
-
+                question.ShowQuestionAnswerOptions();
 
                 string answer = ReadAnswer(question);
 
@@ -132,25 +128,25 @@ question.ShowQuestionAnswerOptions();
                     player.Streak++;
                     player.CorrectAnswers++;
 
-                    Console.WriteLine($"\nCorrect! +{points} points.");
+                    Console.WriteLine($"\nRätt svar! +{points} poäng.");
 
                     if (bonus > 0)
                     {
                         Console.WriteLine(
-                            $"Streak bonus: +{bonus} points " +
-                            $"({player.Streak} correct in a row).");
+                            $"Bonus för rätt svar i rad: +{bonus} poäng " +
+                            $"({player.Streak} rätt i rad).");
                     }
                 }
                 else
                 {
                     player.ResetStreak();
 
-                    Console.WriteLine("\nIncorrect! 0 points.");
+                    Console.WriteLine("\nFel svar! 0 poäng.");
                     Console.WriteLine(
-                        $"Correct answer: {GetCorrectAnswer(question)}");
+                        $"Rätt svar: {GetCorrectAnswer(question)}");
                 }
 
-                Console.WriteLine($"Total score: {player.Score}");
+                Console.WriteLine($"Totalpoäng: {player.Score}");
             }
         }
 
@@ -164,11 +160,11 @@ question.ShowQuestionAnswerOptions();
 
             if (categories.Count == 0)
             {
-                Console.WriteLine("No categories available.");
+                Console.WriteLine("Det finns inga kategorier tillgängliga.");
                 return null;
             }
 
-            Console.WriteLine("\nChoose a category:");
+            Console.WriteLine("\nVälj en kategori:");
 
             for (int i = 0; i < categories.Count; i++)
             {
@@ -181,16 +177,16 @@ question.ShowQuestionAnswerOptions();
                         StringComparison.OrdinalIgnoreCase));
 
                 Console.WriteLine(
-                    $"{i + 1}. {category} ({remaining} questions left)");
+                    $"{i + 1}. {category} ({remaining} frågor kvar)");
             }
 
             int randomOption = categories.Count + 1;
 
-            Console.WriteLine($"{randomOption}. Random category");
+            Console.WriteLine($"{randomOption}. Slumpmässig kategori");
 
             while (true)
             {
-                Console.Write("Enter category number: ");
+                Console.Write("Ange kategorins nummer: ");
                 string? input = Console.ReadLine();
 
                 if (input == null)
@@ -207,13 +203,13 @@ question.ShowQuestionAnswerOptions();
                             Random.Shared.Next(questions.Count)].Category;
 
                         Console.WriteLine(
-                            $"Random category: {randomCategory}");
+                            $"Slumpmässig kategori: {randomCategory}");
 
                         return randomCategory;
                     }
                 }
 
-                Console.WriteLine("Invalid choice. Try again.");
+                Console.WriteLine("Ogiltigt val. Försök igen.");
             }
         }
 
@@ -221,7 +217,7 @@ question.ShowQuestionAnswerOptions();
         {
             while (true)
             {
-                Console.Write("Your answer: ");
+                Console.Write("Ditt svar: ");
                 string input = (Console.ReadLine() ?? "").Trim();
 
                 if (question is MultipleChoiceQuestion multipleChoice)
@@ -234,7 +230,7 @@ question.ShowQuestionAnswerOptions();
                     }
 
                     Console.WriteLine(
-                        $"Enter a number between 1 and " +
+                        $"Ange ett nummer mellan 1 och " +
                         $"{multipleChoice.AnswerOptions.Count}.");
                 }
                 else if (question is TrueFalseQuestion)
@@ -253,14 +249,14 @@ question.ShowQuestionAnswerOptions();
                             return "false";
                     }
 
-                    Console.WriteLine("Enter true (t) or false (f).");
+                    Console.WriteLine("Svara sant (s) eller falskt (f).");
                 }
                 else
                 {
                     if (!string.IsNullOrWhiteSpace(input))
                         return input;
 
-                    Console.WriteLine("Answer cannot be empty.");
+                    Console.WriteLine("Svaret får inte vara tomt.");
                 }
             }
         }
@@ -291,8 +287,8 @@ question.ShowQuestionAnswerOptions();
 
         public void EndGame()
         {
-            Console.WriteLine("\n=== Game over! ===");
-            Console.WriteLine("\nFinal scores:");
+            Console.WriteLine("\n=== Spelet är slut! ===");
+            Console.WriteLine("\nSlutresultat:");
 
             List<Player> rankedPlayers = players
                 .OrderByDescending(p => p.Score)
@@ -304,37 +300,38 @@ question.ShowQuestionAnswerOptions();
                 Player player = rankedPlayers[i];
 
                 Console.WriteLine(
-                    $"{i + 1}. {player.Name}: {player.Score} points " +
-                    $"({player.CorrectAnswers} correct)");
+                    $"{i + 1}. {player.Name}: {player.Score} poäng " +
+                    $"({player.CorrectAnswers} rätt)");
             }
 
             List<Player> winners = scoreManager.DetermineWinner(players);
 
             if (winners.Count == 1)
             {
-                Console.WriteLine($"\nWinner: {winners[0].Name}!");
+                Console.WriteLine($"\nVinnare: {winners[0].Name}!");
             }
             else if (winners.Count > 1)
             {
-                Console.WriteLine("\nIt's a tie between:");
+                Console.WriteLine("\nDet blev oavgjort mellan:");
 
                 foreach (Player winner in winners)
                 {
                     Console.WriteLine(winner.Name);
                 }
             }
-            foreach (Player player in players)
-{
-    HighScoreEntry entry = new HighScoreEntry
-    {
-        Name = player.Name,
-        Score = player.Score,
-        CorrectAnswers = player.CorrectAnswers,
-        Date = DateTime.Now.ToString("yyyy-MM-dd")
-    };
 
-    highScores.SaveHighScore(entry);
-}
+            foreach (Player player in players)
+            {
+                HighScoreEntry entry = new HighScoreEntry
+                {
+                    Name = player.Name,
+                    Score = player.Score,
+                    CorrectAnswers = player.CorrectAnswers,
+                    Date = DateTime.Now.ToString("yyyy-MM-dd")
+                };
+
+                highScores.SaveHighScore(entry);
+            }
         }
     }
 }

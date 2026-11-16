@@ -84,7 +84,14 @@
 
             Console.WriteLine("Spelare: " + string.Join(", ", names));
             Console.WriteLine("Rundor: " + rounds);
-            Console.WriteLine("Spelet kopplas in när Game är mergad.");
+            List<Player> players = new List<Player>();
+            foreach (string name in names)
+            {
+                players.Add(new Player { Name = name });
+            }
+            QuestionManager questionManager = new QuestionManager();
+            Game game = new Game(players, questionManager, rounds, highScores);
+            game.StartGame();
         }
 
         // Läser ett namn per spelare. Tomma namn och dubbletter frågas om igen.

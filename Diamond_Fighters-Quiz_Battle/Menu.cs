@@ -30,7 +30,7 @@
                 switch (choice)
                 {
                     case 1:
-                        StartGame();
+                        InitializeGame();
                         break;
                     case 2:
                         highScores.ShowHighScores();
@@ -76,7 +76,7 @@
         }
 
         // Läser antal spelare, namn och rundor. Spelet kopplas in när Game finns.
-        public void StartGame()
+        public void InitializeGame()
         {
             int playerCount = GetPlayerInput("Antal spelare (2-4): ", 2, 4);
             List<string> names = ReadPlayerNames(playerCount);
@@ -84,7 +84,14 @@
 
             Console.WriteLine("Spelare: " + string.Join(", ", names));
             Console.WriteLine("Rundor: " + rounds);
-            Console.WriteLine("Spelet kopplas in när Game är mergad.");
+            List<Player> players = new List<Player>();
+            foreach (string name in names)
+            {
+                players.Add(new Player { Name = name });
+            }
+            QuestionManager questionManager = new QuestionManager();
+            Game game = new Game(players, questionManager.questions, rounds);
+            game.StartGame();
         }
 
         // Läser ett namn per spelare. Tomma namn och dubbletter frågas om igen.

@@ -8,12 +8,16 @@ namespace Diamond_Fighters_Quiz_Battle
     internal class Game
     {
         private readonly List<Player> players;
-        private readonly List<Question> questions;
+        private readonly QuestionManager questionManager;
         private readonly ScoreManager scoreManager;
         private readonly HighScoreManager highScores;
         private readonly int totalRounds;
 
-        public Game(List<Player> players, List<Question> questions, int totalRounds, HighScoreManager highScores)
+        public Game(
+            List<Player> players,
+            QuestionManager questionManager,
+            int totalRounds,
+            HighScoreManager highScores)
         {
             if (players == null || players.Count < 2 || players.Count > 4)
                 throw new ArgumentException("Spelet kräver 2–4 spelare.");
@@ -28,14 +32,14 @@ namespace Diamond_Fighters_Quiz_Battle
                     "Alla spelare måste ha olika namn och namnen får inte vara tomma.");
             }
 
-            if (questions == null)
-                throw new ArgumentNullException(nameof(questions));
+            if (questionManager == null)
+                throw new ArgumentNullException(nameof(questionManager));
 
             if (totalRounds < 1 || totalRounds > 10)
                 throw new ArgumentException("Välj mellan 1 och 10 rundor.");
 
             this.players = players;
-            this.questions = new List<Question>(questions);
+            this.questionManager = questionManager;
             this.totalRounds = totalRounds;
             scoreManager = new ScoreManager();
             this.highScores = highScores;
@@ -54,7 +58,7 @@ namespace Diamond_Fighters_Quiz_Battle
 
             for (int round = 1; round <= totalRounds; round++)
             {
-                if (questions.Count == 0)
+                if (questionManager.OutOfQuestions)
                 {
                     Console.WriteLine("Det finns inga fler frågor.");
                     break;
@@ -71,7 +75,7 @@ namespace Diamond_Fighters_Quiz_Battle
         {
             foreach (Player player in players)
             {
-                if (questions.Count == 0)
+                if (questionManager.OutOfQuestions)
                 {
                     Console.WriteLine("Det finns inga fler frågor.");
                     return;
@@ -84,25 +88,14 @@ namespace Diamond_Fighters_Quiz_Battle
                 if (category == null)
                     return;
 
-                List<Question> availableQuestions = questions
-                    .Where(q => string.Equals(
-                        q.Category,
-                        category,
-                        StringComparison.OrdinalIgnoreCase))
-                    .ToList();
+                // Hämta frågan via QuestionManager.
+                Question? question = questionManager.GetQuestion(category);
 
-                if (availableQuestions.Count == 0)
+                if (question == null)
                 {
                     Console.WriteLine("Det finns inga frågor tillgängliga.");
                     return;
                 }
-
-                // Välj en slumpmässig fråga som inte använts tidigare.
-                Question question = availableQuestions[
-                    Random.Shared.Next(availableQuestions.Count)];
-
-                // Ta bort frågan så att den inte kommer igen.
-                questions.Remove(question);
 
                 int difficulty = GetDifficulty(question.DifficultyLevel);
                 int basePoints = question.GetScore();
@@ -152,10 +145,11 @@ namespace Diamond_Fighters_Quiz_Battle
 
         private string? ChooseCategory()
         {
-            List<string> categories = questions
-                .Select(q => q.Category)
+            // Hämta kategorier från QuestionManager.
+            List<string> categories = questionManager.GetCategories()
                 .Where(c => !string.IsNullOrWhiteSpace(c))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Where(c =>
+                    questionManager.RemainingQuestionsInCategory(c) > 0)
                 .ToList();
 
             if (categories.Count == 0)
@@ -170,11 +164,8 @@ namespace Diamond_Fighters_Quiz_Battle
             {
                 string category = categories[i];
 
-                int remaining = questions.Count(q =>
-                    string.Equals(
-                        q.Category,
-                        category,
-                        StringComparison.OrdinalIgnoreCase));
+                int remaining =
+                    questionManager.RemainingQuestionsInCategory(category);
 
                 Console.WriteLine(
                     $"{i + 1}. {category} ({remaining} frågor kvar)");
@@ -199,8 +190,8 @@ namespace Diamond_Fighters_Quiz_Battle
 
                     if (choice == randomOption)
                     {
-                        string randomCategory = questions[
-                            Random.Shared.Next(questions.Count)].Category;
+                        string randomCategory = categories[
+                            Random.Shared.Next(categories.Count)];
 
                         Console.WriteLine(
                             $"Slumpmässig kategori: {randomCategory}");

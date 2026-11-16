@@ -10,9 +10,10 @@ namespace Diamond_Fighters_Quiz_Battle
         private readonly List<Player> players;
         private readonly List<Question> questions;
         private readonly ScoreManager scoreManager;
+        private readonly HighScoreManager highScores;
         private readonly int totalRounds;
 
-        public Game(List<Player> players, List<Question> questions, int totalRounds)
+        public Game(List<Player> players, List<Question> questions, int totalRounds, HighScoreManager highScores)
         {
             if (players == null || players.Count < 2 || players.Count > 4)
                 throw new ArgumentException("The game requires 2-4 players.");
@@ -37,6 +38,7 @@ namespace Diamond_Fighters_Quiz_Battle
             this.questions = new List<Question>(questions);
             this.totalRounds = totalRounds;
             scoreManager = new ScoreManager();
+            this.highScores = highScores;
         }
 
         public void StartGame()
@@ -110,18 +112,11 @@ namespace Diamond_Fighters_Quiz_Battle
 
                 Console.WriteLine(question.QuestionText);
 
-                if (question is MultipleChoiceQuestion multipleChoice)
-                {
-                    for (int i = 0; i < multipleChoice.AnswerOptions.Count; i++)
-                    {
-                        Console.WriteLine(
-                            $"{i + 1}. {multipleChoice.AnswerOptions[i]}");
-                    }
-                }
-                else if (question is TrueFalseQuestion)
-                {
-                    Console.WriteLine("True (t) or false (f)?");
-                }
+  
+
+question.ShowQuestionAnswerOptions();
+
+
 
                 string answer = ReadAnswer(question);
 
@@ -328,6 +323,18 @@ namespace Diamond_Fighters_Quiz_Battle
                     Console.WriteLine(winner.Name);
                 }
             }
+            foreach (Player player in players)
+{
+    HighScoreEntry entry = new HighScoreEntry
+    {
+        Name = player.Name,
+        Score = player.Score,
+        CorrectAnswers = player.CorrectAnswers,
+        Date = DateTime.Now.ToString("yyyy-MM-dd")
+    };
+
+    highScores.SaveHighScore(entry);
+}
         }
     }
 }

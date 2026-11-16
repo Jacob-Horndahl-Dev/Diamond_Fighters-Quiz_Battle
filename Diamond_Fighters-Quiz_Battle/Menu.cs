@@ -90,7 +90,7 @@
                 players.Add(new Player { Name = name });
             }
             QuestionManager questionManager = new QuestionManager();
-            Game game = new Game(players, questionManager.questions, rounds);
+            Game game = new Game(players, questionManager.questions, rounds, highScores);
             game.StartGame();
         }
 

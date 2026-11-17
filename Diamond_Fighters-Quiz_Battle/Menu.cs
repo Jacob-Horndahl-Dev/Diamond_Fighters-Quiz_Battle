@@ -91,6 +91,7 @@
                 players.Add(new Player { Name = name });
             }
             QuestionManager questionManager = new QuestionManager();
+            questionManager.PrepareQuestions(rounds, playerCount);
             Game game = new Game(players, questionManager, rounds, this);
             game.StartGame();
 

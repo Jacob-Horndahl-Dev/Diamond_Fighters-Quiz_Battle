@@ -62,6 +62,42 @@
           ],
           "correctIndex": 2,
           "difficulty": "hard"
+        },
+        {
+          "type": "trueFalse",
+          "text": "Interface i C# kan innehålla implementationskod för metoder som standard sedan nyare C#-versioner.",
+          "correct": true,
+          "difficulty": "hard"
+        },
+        {
+          "type": "multipleChoice",
+          "text": "Vilket nyckelord används för att göra en egenskap skrivskyddad efter att objektet skapats?",
+          "options": [
+            "readonly",
+            "init",
+            "const",
+            "static"
+          ],
+          "correctIndex": 1,
+          "difficulty": "medium"
+        },
+        {
+          "type": "trueFalse",
+          "text": "Alla klasser i C# är i sista hand ärvda från object-klassen.",
+          "correct": true,
+          "difficulty": "easy"
+        },
+        {
+          "type": "multipleChoice",
+          "text": "Vad står bokstaven O för i SOLID-principerna?",
+          "options": [
+            "Object-Oriented Principle",
+            "Open/Closed Principle",
+            "Output Validation Principle",
+            "Overload Resolution Principle"
+          ],
+          "correctIndex": 1,
+          "difficulty": "hard"
         }
       ]
     },
@@ -127,6 +163,42 @@
           ],
           "correctIndex": 2,
           "difficulty": "hard"
+        },
+        {
+          "type": "trueFalse",
+          "text": "Australien är både ett land och en världsdel.",
+          "correct": true,
+          "difficulty": "easy"
+        },
+        {
+          "type": "multipleChoice",
+          "text": "I vilken världsdel ligger landet Surinam?",
+          "options": [
+            "Afrika",
+            "Asien",
+            "Sydamerika",
+            "Oceanien"
+          ],
+          "correctIndex": 2,
+          "difficulty": "hard"
+        },
+        {
+          "type": "trueFalse",
+          "text": "Kanada har en landgräns mot USA.",
+          "correct": true,
+          "difficulty": "easy"
+        },
+        {
+          "type": "multipleChoice",
+          "text": "Vilket är världens minsta land till ytan?",
+          "options": [
+            "Monako",
+            "Liechtenstein",
+            "Vatikanstaten",
+            "San Marino"
+          ],
+          "correctIndex": 2,
+          "difficulty": "medium"
         }
       ]
     },
@@ -186,6 +258,42 @@
           "text": "Botaniskt sett är en gurka en frukt.",
           "correct": true,
           "difficulty": "hard"
+        },
+        {
+          "type": "multipleChoice",
+          "text": "Vem målade Mona Lisa?",
+          "options": [
+            "Vincent van Gogh",
+            "Leonardo da Vinci",
+            "Pablo Picasso",
+            "Claude Monet"
+          ],
+          "correctIndex": 1,
+          "difficulty": "easy"
+        },
+        {
+          "type": "trueFalse",
+          "text": "Människokroppen har fler än 300 ben när man föds.",
+          "correct": true,
+          "difficulty": "medium"
+        },
+        {
+          "type": "multipleChoice",
+          "text": "Vilket år landade människan på månen för första gången?",
+          "options": [
+            "1965",
+            "1969",
+            "1971",
+            "1973"
+          ],
+          "correctIndex": 1,
+          "difficulty": "medium"
+        },
+        {
+          "type": "trueFalse",
+          "text": "Ljuset rör sig snabbare än ljudet.",
+          "correct": true,
+          "difficulty": "easy"
         }
       ]
     }

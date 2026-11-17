@@ -97,25 +97,19 @@ namespace Diamond_Fighters_Quiz_Battle
                     Console.WriteLine("Det finns inga frågor tillgängliga.");
                     return;
                 }
-
-                int difficulty = GetDifficulty(question.DifficultyLevel);
+                                
                 int basePoints = question.GetScore();
 
                 Console.WriteLine(
                     $"\nKategori: {question.Category} ({basePoints} poäng)");
 
                 Console.WriteLine(question.QuestionText);
-
                 question.ShowQuestionAnswerOptions();
-
                 string answer = menu.ReadAnswer(question);
 
                 if (question.CheckAnswer(answer))
                 {
-                    int points = scoreManager.CalculateScore(
-                        difficulty,
-                        player.Streak);
-
+                    int points = scoreManager.CalculateScore(basePoints, player.Streak);
                     int bonus = points - basePoints;
 
                     player.AddPoints(points);
@@ -142,18 +136,7 @@ namespace Diamond_Fighters_Quiz_Battle
 
                 Console.WriteLine($"Totalpoäng: {player.Score}");
             }
-        }
-
-        private int GetDifficulty(string? difficulty)
-        {
-            return difficulty?.Trim().ToLowerInvariant() switch
-            {
-                "easy" => 1,
-                "medium" => 2,
-                "hard" => 3,
-                _ => 1
-            };
-        }
+        }        
 
         private string GetCorrectAnswer(Question question)
         {

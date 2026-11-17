@@ -131,33 +131,12 @@ namespace Diamond_Fighters_Quiz_Battle
 
                     Console.WriteLine("\nFel svar! 0 poäng.");
                     Console.WriteLine(
-                        $"Rätt svar: {GetCorrectAnswer(question)}");
+                        $"Rätt svar: {question.GetCorrectAnswer()}");
                 }
 
                 Console.WriteLine($"Totalpoäng: {player.Score}");
             }
-        }        
-
-        private string GetCorrectAnswer(Question question)
-        {
-            if (question is MultipleChoiceQuestion multipleChoice &&
-                int.TryParse(question.CorrectAnswer, out int index) &&
-                index >= 0 &&
-                index < multipleChoice.AnswerOptions.Count)
-            {
-                return multipleChoice.AnswerOptions[index];
-            }
-
-            if (question is TrueFalseQuestion)
-            {
-                bool isTrue = question.CorrectAnswer
-                    .Equals("true", StringComparison.OrdinalIgnoreCase);
-                return isTrue ? "sant" : "falskt";
-            }
-
-            return question.CorrectAnswer;
         }
-
         public void EndGame()
         {
             Console.WriteLine("\n=== Spelet är slut! ===");

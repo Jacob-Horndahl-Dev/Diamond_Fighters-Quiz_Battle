@@ -13,6 +13,10 @@ namespace Diamond_Fighters_Quiz_Battle
             //Måste jag ha en konstruktor? Frågorna laddas in via json. Går att lägga kontroll av null/whitespace här, men lägger det vid inläsningen för att slippa göra konstruktorer.
         }*/
         public abstract void ShowQuestionAnswerOptions(); //Subklasserna overridar denna.
+        public virtual string GetCorrectAnswer()
+        {
+            return CorrectAnswer;
+        }
         
         public virtual bool CheckAnswer(string guessedAnswer) //virtual när det finns en "standard" metod, abstract om den ska vara helt tom och subklasserna bestämmer helt själva hur det fungerar.
         {

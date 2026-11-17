@@ -14,7 +14,7 @@ namespace Diamond_Fighters_Quiz_Battle
                     Console.WriteLine($"{i + 1}. {AnswerOptions[i]}");
                 }
             }
-        }
+        }        
         public override bool CheckAnswer(string guessedAnswer) //Kontroll av svar när flera alternativ finns.
         {            
             if (int.TryParse(guessedAnswer, out int parsedGuess)) //Kontroll av svar via index (1-4)
@@ -31,6 +31,17 @@ namespace Diamond_Fighters_Quiz_Battle
                 return guessedAnswer.Trim().ToLower() == correctAnswer.Trim().ToLower(); //om svaret utskrivet är rätt
             }
                 return false; //om svaret inte är ett giltigt index 1-4, skrivet helt rätt eller är fel returneras false.
+        }
+        public override string GetCorrectAnswer()
+        {
+            if (int.TryParse(CorrectAnswer, out int index) &&
+                index >= 0 &&
+                index < AnswerOptions.Count)
+            {
+                return AnswerOptions[index];
+            }
+
+            return CorrectAnswer;
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Diamond_Fighters_Quiz_Battle
                 default:        //ifall något är felinmatat
                     return 10;
             }
-            
+
         }
     }
 }

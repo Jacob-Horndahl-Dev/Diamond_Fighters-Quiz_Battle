@@ -6,21 +6,8 @@ namespace Diamond_Fighters_Quiz_Battle
 {
     public class ScoreManager
     {
-        public int CalculateScore(int difficulty, int streak)
-        {
-            int basePoints = difficulty switch
-            {
-                1 => 10,
-                2 => 20,
-                3 => 30,
-                _ => 0
-            };
-
-            if (basePoints == 0)
-            {
-                return 0;
-            }
-
+        public int CalculateScore(int basePoints, int streak)
+        {  
             int bonus = System.Math.Min(streak * 5, 20);
 
             return basePoints + bonus;

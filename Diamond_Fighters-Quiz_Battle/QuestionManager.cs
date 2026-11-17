@@ -20,6 +20,22 @@ namespace Diamond_Fighters_Quiz_Battle
             questions = questions.OrderBy(q => Guid.NewGuid()).ToList(); //Linq funktionen Guid.NewGuid() blandar listan, och vi slipper göra en loop för det!
             categoriesList = questions.Select(q => q.Category).Distinct().ToList(); //Laddar en lista med alla kategorier som fanns med i början av spelet.
         }
+        public void PrepareQuestions(int rounds, int playerCount) //Gör så att antalet frågor per kategori blir ((antalet rundor * antalet spelare) / 2)
+        {
+            int questionCountPerCategory = (rounds * playerCount) / 2; //uträkningen av antalet frågor per kategori
+            List<string> categories = GetCategories(); //Hämtar kategorierna
+            List<Question> preparedQuestions = []; //temporär lista som vi sparar de utvalda frågorna i nedan
+
+            foreach (string category in categories) //tar ut via .Take så många frågor vi vill ha kvar.
+            {
+                List<Question> selectedQuestions = questions
+                    .Where(q => q.Category.Equals(category))
+                    .Take(questionCountPerCategory)
+                    .ToList();
+                preparedQuestions.AddRange(selectedQuestions);
+            }
+            questions = preparedQuestions; //Skriver över listan med alla inladdade frågor!
+        }
         public List<string> GetCategories()
         {
             return categoriesList; //returnerar en lista med kategorierna som finns. tex: List<string> categories = questionManager.GetCategories();

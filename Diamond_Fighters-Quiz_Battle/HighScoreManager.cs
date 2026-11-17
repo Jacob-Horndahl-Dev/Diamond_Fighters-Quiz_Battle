@@ -52,7 +52,11 @@ namespace Diamond_Fighters_Quiz_Battle
             List<HighScoreEntry> entries = LoadHighScores();
             entries.Add(entry);
 
-            Directory.CreateDirectory("data");
+            string? directory = Path.GetDirectoryName(filePath);
+            if (!string.IsNullOrEmpty(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
 
             JsonSerializerOptions options = new JsonSerializerOptions();
             options.WriteIndented = true;

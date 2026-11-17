@@ -5,7 +5,7 @@ namespace Diamond_Fighters_Quiz_Battle
     {
         public override void ShowQuestionAnswerOptions()
         {
-            Console.WriteLine("True (t) or false (f)?");
+            Console.WriteLine("Sant (s) eller falskt (f)?");
         }
     }
 }
